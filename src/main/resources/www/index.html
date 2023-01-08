@@ -62,7 +62,7 @@
             template: '<my-component></my-component>'
         });
 
-        window.apiURL = "http://localhost:8123/api/";
+        window.apiURL = window.location.href.replace("index.html", "") + "api/";
         app.config.globalProperties.window = window;
         app.mount('#app');
     </script>

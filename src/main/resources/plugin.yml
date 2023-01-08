@@ -1,6 +1,6 @@
 name: SpigotFiles
-version: 1.0
-api-version: 1.19
+version: 1.1
+api-version: 1.13
 author: Tobias Dickes
 main: de.tobias.spigotfiles.Main
 commands:

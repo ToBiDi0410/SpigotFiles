@@ -30,6 +30,8 @@ public class Main extends JavaPlugin {
         pl = this;
         mainLogger.info("Loading Plugin...");
 
+        Metrics metrics = new Metrics(this, 17350);
+
         settings = new Settings(new File(getDataFolder(), "settings.yml"), mainLogger);
         if(!settings.doAll()) throw new RuntimeException("Settings file invalid! Please fix this or delete the file");
 

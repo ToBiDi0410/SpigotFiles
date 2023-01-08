@@ -69,12 +69,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>de.tobias</groupId>
-            <artifactId>MCUtils</artifactId>
-            <version>0.1</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -93,6 +87,22 @@
             <groupId>at.favre.lib</groupId>
             <artifactId>bcrypt</artifactId>
             <version>0.9.0</version>
+        </dependency>
+
+
+        <!--
+        LOCAL FOR TESTING
+        <dependency>
+            <groupId>de.tobias</groupId>
+            <artifactId>MCUtils</artifactId>
+            <version>0.1</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>com.github.ToBiDi0410</groupId>
+            <artifactId>MCUtils</artifactId>
+            <version>799b26f467</version>
         </dependency>
     </dependencies>
 

@@ -1,15 +1,14 @@
 package de.tobias.spigotfiles;
 
 import de.tobias.mcutils.bukkit.BukkitLogger;
-import de.tobias.mcutils.shared.DatabaseUtils.DatabaseObjectTableEntry;
 import de.tobias.spigotfiles.filedb.FileDB;
 import de.tobias.spigotfiles.filedb.FileIndexer;
 import de.tobias.spigotfiles.users.User;
+import de.tobias.spigotfiles.users.UserManager;
 import de.tobias.spigotfiles.web.JettyServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.io.File;
 
 public class Main extends JavaPlugin {
 
@@ -17,29 +16,18 @@ public class Main extends JavaPlugin {
     public BukkitLogger mainLogger = new BukkitLogger("§bSpigotFiles §7| ");
     public FileDB fileDB;
     public JettyServer jettyServer;
-    public ArrayList<User> userCache = new ArrayList<>();
-    public User serverUser;
+    public UserManager userManager;
 
     @Override
     public void onEnable() {
         pl = this;
         mainLogger.info("Loading Plugin...");
 
-        serverUser = new User();
-        try {
-            Field f = DatabaseObjectTableEntry.class.getDeclaredField("id");
-            f.setAccessible(true);
-            f.set(serverUser, "SERVER");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        serverUser.username = "Server";
-        serverUser.password = "";
-        userCache.add(serverUser);
-
         jettyServer = new JettyServer(8123);
         if(!jettyServer.start()) throw new RuntimeException("Failed to start webserver (check above)");
+
+        userManager = new UserManager(new File(getDataFolder(), "users.yml"));
+        userManager.init();
 
         fileDB = new FileDB();
         if(!fileDB.db.connect()) throw new RuntimeException("Failed to connect to database (check above)");
@@ -50,6 +38,13 @@ public class Main extends JavaPlugin {
         FileIndexer.updateAll();
 
         mainLogger.info("§aPlugin loaded successfully!");
+
+        if(userManager.users.size() < 2) {
+            User testUser = new User("test");
+            testUser.updatePassword("jesusishere");
+            userManager.users.add(testUser);
+            userManager.save();
+        }
 
         //File testFile100 = new File(Bukkit.getWorldContainer(), "testtesttest.json");
         //FileManager.copy(serverUser, testFile100, new File(Bukkit.getWorldContainer(), "test-copy.json"));
@@ -91,6 +86,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if(userManager != null) userManager.save();
         if(fileDB != null) fileDB.db.disconnect();
         if(jettyServer != null) jettyServer.stop();
     }

@@ -43,6 +43,9 @@ public class JettyServer {
             handler.addServlet(DownloadHandler.class, "/api/download");
             handler.addServlet(DownloadDirHandler.class, "/api/downloadDir");
             handler.addServlet(DeleteHandler.class, "/api/delete");
+            handler.addServlet(LoginHandler.class, "/api/login");
+            handler.addServlet(LoginStateHandler.class, "/api/loginstate");
+            handler.addServlet(MainServlet.class, "/*");
 
             server.start();
             logger.info("§aServer started successfully!");

@@ -5,7 +5,6 @@ import de.tobias.spigotfiles.Main;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -58,7 +57,7 @@ public class FileEntry extends DatabaseObjectTableEntry<FileEntry> {
         if(exists == null || f.exists() != exists) {
             FileTransaction changeTransaction = new FileTransaction();
             changeTransaction.type = f.exists() ? FileTransactionType.CREATE.name() : FileTransactionType.DELETE.name();
-            changeTransaction.user = Main.pl.serverUser.getID();
+            changeTransaction.user = Main.pl.userManager.serverUser.ID;
             changeTransaction.additionalData = (exists == null ? "NEWLY_INDEXED" : "UNRECORDED");
             addTransaction(changeTransaction);
         }

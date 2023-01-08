@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.tobias.spigotfiles.Main;
 import de.tobias.spigotfiles.filedb.FileEntry;
+import de.tobias.spigotfiles.users.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -23,9 +25,18 @@ public class ListHandler extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.addHeader("Access-Control-Allow-Origin", "*");
 
+        HttpSession session = req.getSession();
+        User u = (User) session.getAttribute("user");
+        if(u == null) {
+            resp.setStatus(401);
+            resp.getWriter().write("LOGIN_REQUIRED");
+            resp.getWriter().close();
+            return;
+        }
+
         if(!req.getParameterMap().containsKey("path")) {
             resp.setStatus(400);
-            resp.getWriter().write("path not specified");
+            resp.getWriter().write("REQUIRED_FIELD;path");
             resp.getWriter().close();
             return;
         }
@@ -36,7 +47,7 @@ public class ListHandler extends HttpServlet {
         FileEntry baseFile = Main.pl.fileDB.getEntryByFile(f);
         if(baseFile == null) {
             resp.setStatus(404);
-            resp.getWriter().write("file not found");
+            resp.getWriter().write("FILE_NOT_FOUND");
             resp.getWriter().close();
             return;
         }

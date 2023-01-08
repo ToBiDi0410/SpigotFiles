@@ -1,0 +1,82 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,200" />
+</head>
+
+<body>
+    <div id="app" class="w-full h-full"></div>
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.14.0/src-noconflict/ace.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+    <script>
+        function humanFileSize(size) {
+            var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        }
+
+        function humanFileSizeLong(size) {
+            var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['Bytes', 'Kilobytes', 'Megabytes', 'Gigabytes', 'Terrabytes'][i];
+        }
+    </script>
+    <script>
+        const options = {
+            moduleCache: {
+                vue: Vue
+            },
+            async getFile(url) {
+
+                const res = await fetch(url);
+                if (!res.ok)
+                    throw Object.assign(new Error(res.statusText + ' ' + url), {
+                        res
+                    });
+                return {
+                    getContentData: asBinary => asBinary ? res.arrayBuffer() : res.text(),
+                }
+            },
+            addStyle(textContent) {
+
+                const style = Object.assign(document.createElement('style'), {
+                    textContent
+                });
+                const ref = document.head.getElementsByTagName('style')[0] || null;
+                document.head.insertBefore(style, ref);
+            },
+        }
+
+        const {
+            loadModule
+        } = window['vue3-sfc-loader'];
+
+        const app = Vue.createApp({
+            components: {
+                'my-component': Vue.defineAsyncComponent(() => loadModule('./Main.vue', options))
+            },
+            template: '<my-component></my-component>'
+        });
+
+        window.apiURL = "http://localhost:8123/api/";
+        app.config.globalProperties.window = window;
+        app.mount('#app');
+    </script>
+    <style>
+         ::-webkit-scrollbar {
+            width: 8px;
+            height: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            border-radius: 8px;
+            background: #c2c9d2;
+        }
+    </style>
+</body>
+
+</html>

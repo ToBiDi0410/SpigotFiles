@@ -28,7 +28,7 @@ public class FileManager {
 
             FileTransaction moveTransaction = new FileTransaction();
             moveTransaction.type = FileTransactionType.MOVE.name();
-            moveTransaction.user = u.getID();
+            moveTransaction.user = u.ID;
             moveTransaction.additionalData = source.getAbsolutePath() + ";;;" + target.getAbsolutePath();
             sourceEntry.addTransaction(moveTransaction);
 
@@ -57,7 +57,7 @@ public class FileManager {
 
             FileTransaction renameTransaction = new FileTransaction();
             renameTransaction.type = FileTransactionType.RENAME.name();
-            renameTransaction.user = u.getID();
+            renameTransaction.user = u.ID;
             renameTransaction.additionalData = source.getName() + ";;;" + target.getName();
             sourceEntry.addTransaction(renameTransaction);
 
@@ -83,13 +83,13 @@ public class FileManager {
 
             FileTransaction copyToTransaction = new FileTransaction();
             copyToTransaction.type = FileTransactionType.COPY_TO.name();
-            copyToTransaction.user = u.getID();
+            copyToTransaction.user = u.ID;
             copyToTransaction.additionalData = targetEntry.PATH;
             sourceEntry.addTransaction(copyToTransaction);
 
             FileTransaction copyFromTransaction = new FileTransaction();
             copyFromTransaction.type = FileTransactionType.COPY_FROM.name();
-            copyFromTransaction.user = u.getID();
+            copyFromTransaction.user = u.ID;
             copyFromTransaction.additionalData = sourceEntry.PATH;
             targetEntry.addTransaction(copyFromTransaction);
 
@@ -115,7 +115,7 @@ public class FileManager {
 
             FileTransaction deleteTransaction = new FileTransaction();
             deleteTransaction.type = FileTransactionType.DELETE.name();
-            deleteTransaction.user = u.getID();
+            deleteTransaction.user = u.ID;
             sourceEntry.addTransaction(deleteTransaction);
 
             sourceEntry.exists = false;

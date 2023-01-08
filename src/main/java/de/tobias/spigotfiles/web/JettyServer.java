@@ -2,6 +2,7 @@ package de.tobias.spigotfiles.web;
 
 import de.tobias.mcutils.bukkit.BukkitLogger;
 import de.tobias.spigotfiles.Main;
+import jakarta.servlet.MultipartConfigElement;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -45,6 +46,7 @@ public class JettyServer {
             handler.addServlet(DeleteHandler.class, "/api/delete");
             handler.addServlet(LoginHandler.class, "/api/login");
             handler.addServlet(LoginStateHandler.class, "/api/loginstate");
+            handler.addServlet(UploadHandler.class, "/api/upload").getRegistration().setMultipartConfig(new MultipartConfigElement(""));
             handler.addServlet(MainServlet.class, "/*");
 
             server.start();

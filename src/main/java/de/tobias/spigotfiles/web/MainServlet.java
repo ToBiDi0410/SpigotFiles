@@ -21,6 +21,11 @@ public class MainServlet extends HttpServlet {
 
         String respath = (String) "/www" + path;
         URL res = Main.pl.getClass().getResource(respath);
+        if(res == null) {
+            response.sendError(404);
+            return;
+        }
+
         byte[] content = Resources.toByteArray(res);
         if(content == null) {
             response.sendRedirect("404.html");
@@ -29,11 +34,6 @@ public class MainServlet extends HttpServlet {
 
         OutputStream outputStream = response.getOutputStream();
         String extension = FilenameUtils.getExtension(path);
-
-        /*if(extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("js") || extension.equalsIgnoreCase("css")) {
-            String fileContent = new String(content, StandardCharsets.UTF_8);
-            content = fileContent.getBytes(StandardCharsets.UTF_8);
-        }*/
 
         response.setStatus(HttpServletResponse.SC_OK);
         outputStream.write(content);

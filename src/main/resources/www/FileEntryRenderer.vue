@@ -1,5 +1,5 @@
 <template>
-    <div class="FileEntryRenderer p-2 hover:bg-gray-100" :class="{ 'bg-red-200 hover:bg-red-300' : !data.exists }" v-if="data.exists" style="min-width: 32rem;">
+    <div class="FileEntryRenderer p-2 hover:bg-gray-100" :class="{ 'bg-red-200 hover:bg-red-300' : !data.exists }" v-if="data.exists || window.showAny" style="min-width: 32rem;">
         <div class="flex flex-row items-center">
             <div class="w-16"><Icon>{{ getIcon() }}</Icon></div>
             <div class="flex-grow">

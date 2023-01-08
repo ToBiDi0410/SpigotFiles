@@ -1,7 +1,11 @@
 <template>
     <div class="FileBrowser w-full h-full flex flex-col overflow-hidden">
-        <div class="h-12 w-full bg-black text-white z-20">
-            <a>HI!!!!</a>
+        <div class="h-12 w-full bg-black text-white">
+            <div class="flex flex-row px-6 items-center h-full w-full">
+                <div class="font-bold text-lg">SpigotFiles</div>
+                <div class="flex-grow text-center">More features coming soon</div>
+                <div>User: {{ window.user.name }}</div>
+            </div>
         </div>
 
         <div class="w-full flex flex-row items-stretch flex-grow relative h-0">
@@ -18,7 +22,7 @@
                 <FileEntryRenderer v-for="file of filesToDisplay" v-bind:key="file.ID" :data="file" @click="handleClick(file)" @nameClicked="handleNameClick(file)" @contextmenu.prevent="handleContextMenuClick($event, file)"></FileEntryRenderer>
             </div>
 
-            <FileContextMenu ref="contextMenu" @updateList="updateList"></FileContextMenu>
+            <FileContextMenu ref="contextMenu" @updateList="updateList" :currentPath="currentPath"></FileContextMenu>
             <FileViewer :file="displayedFile" v-if="displayedFile" @close="displayedFile = null"></FileViewer>
 
             <Transition name="slide">

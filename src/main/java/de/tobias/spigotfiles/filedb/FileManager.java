@@ -3,6 +3,7 @@ package de.tobias.spigotfiles.filedb;
 import de.tobias.mcutils.bukkit.BukkitLogger;
 import de.tobias.spigotfiles.Main;
 import de.tobias.spigotfiles.users.User;
+import jakarta.servlet.http.Part;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -126,6 +127,46 @@ public class FileManager {
             return true;
         } catch (Exception ex) {
             logger.error("Failed to delete file '" + source.getAbsolutePath() + "':");
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean upload(User u, File dir, Part file) {
+        try {
+            long startUpload = System.currentTimeMillis();
+            if(!dir.exists()) throw new Exception("Directory does not exist");
+
+            FileIndexer.indexFile(dir);
+            File target = new File(dir, file.getSubmittedFileName());
+            boolean existedBefore = target.exists();
+            Files.copy(file.getInputStream(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            FileIndexer.indexFile(target);
+
+            FileEntry targetEntry = Main.pl.fileDB.getEntryByFile(target);
+
+            if(!existedBefore) {
+                FileTransaction uploadTransaction = new FileTransaction();
+                uploadTransaction.type = FileTransactionType.ADD.name();
+                uploadTransaction.user = u.ID;
+                uploadTransaction.date = startUpload;
+                targetEntry.addTransaction(uploadTransaction);
+            } else {
+                FileTransaction updateTransaction = new FileTransaction();
+                updateTransaction.type = FileTransactionType.UPDATE.name();
+                updateTransaction.user = u.ID;
+                updateTransaction.date = startUpload;
+                targetEntry.addTransaction(updateTransaction);
+            }
+
+            targetEntry.exists = true;
+            targetEntry.forceUpdateIndex();
+            targetEntry.save();
+
+            logger.info("§aUploaded File: " + target.getAbsolutePath() + "");
+            return true;
+        } catch (Exception ex) {
+            logger.error("Failed to upload/save file '" + file.getSubmittedFileName() + "':");
             ex.printStackTrace();
             return false;
         }

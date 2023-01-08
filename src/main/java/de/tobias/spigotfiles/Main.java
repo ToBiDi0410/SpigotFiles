@@ -23,6 +23,9 @@ public class Main extends JavaPlugin {
         pl = this;
         mainLogger.info("Loading Plugin...");
 
+        //BukkitAutoUpdater updater = new BukkitAutoUpdater(mainLogger, this, "https://github.com/ToBiDi0410/JoinMePlus/raw/build/target/joinmeplus-1.0-jar-with-dependencies.jar", "https://raw.githubusercontent.com/ToBiDi0410/JoinMePlus/build/src/main/resources/bungee.yml");
+        //if(updater.checkForUpdateAndUpdate()) return;
+
         jettyServer = new JettyServer(8123);
         if(!jettyServer.start()) throw new RuntimeException("Failed to start webserver (check above)");
 
@@ -45,43 +48,6 @@ public class Main extends JavaPlugin {
             userManager.users.add(testUser);
             userManager.save();
         }
-
-        //File testFile100 = new File(Bukkit.getWorldContainer(), "testtesttest.json");
-        //FileManager.copy(serverUser, testFile100, new File(Bukkit.getWorldContainer(), "test-copy.json"));
-
-        /*File testFile100 = new File(Bukkit.getWorldContainer(), "banned-players.json");
-        FileEntry testFile100E = fileDB.getEntryByFile(testFile100);
-        System.out.println(fileDB.getTransactionsByFile(testFile100E).size());*/
-
-        /*FileEntry rootEntry = fileDB.getEntryByFile(Bukkit.getWorldContainer());
-        long start = System.currentTimeMillis();
-        ArrayList<FileEntry> children = rootEntry.getChildren();
-        System.out.println("Operation took: " + (System.currentTimeMillis()-start));
-        for(FileEntry entries : children) {
-            System.out.println(entries.getAsFile().getAbsolutePath() + " (" + (entries.exists ? "EXISTS" : "DELETED") +")");
-        }*/
-
-        //File testSource = new File(Bukkit.getWorldContainer(), "ops.json");
-        //FileIndexer.indexFile(testSource);
-
-        /*
-
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            File testSource = new File(Bukkit.getWorldContainer(), "ops.json");
-            File testDestination = new File(Bukkit.getWorldContainer(), Math.random() + ".json");
-            FileManager.copy(serverUser, testSource, testDestination);
-            FileManager.rename(serverUser, testDestination, "TESTFILE.json");
-
-            File f = new File(Bukkit.getWorldContainer(), "TESTFILE.json");
-            FileManager.delete(serverUser, f);
-
-            FileEntry fE = fileDB.getEntryByFile(f);
-            ArrayList<FileTransaction> transactions = fE.getTransactions();
-            mainLogger.info("------- [FILE TRANS] -------");
-            for(FileTransaction trans : transactions) {
-                mainLogger.info(trans.type + ": " + trans.additionalData);
-            }
-        }, 20L);*/
     }
 
     @Override

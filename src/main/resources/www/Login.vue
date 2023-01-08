@@ -33,7 +33,6 @@ export default {
             this.loading = true;
             const username = this.$refs.username.value;
             const password = this.$refs.password.value;
-            console.log(username, password);
 
             const req = await fetch(window.apiURL + "login?username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password), { credentials: 'same-origin' });
             const res = await req.text();

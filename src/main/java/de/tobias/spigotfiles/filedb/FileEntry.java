@@ -30,8 +30,10 @@ public class FileEntry extends DatabaseObjectTableEntry<FileEntry> {
     }
     public boolean addTransaction(FileTransaction trans) {
         trans.FILE_ID = getID();
-        trans.date = System.currentTimeMillis();
-        return trans.create(Main.pl.fileDB.fileTransactionTable);
+        if(trans.date == null || trans.date == 0) trans.date = System.currentTimeMillis();
+        boolean res = trans.create(Main.pl.fileDB.fileTransactionTable);
+        if(res) transactions = null;
+        return res;
     }
 
     public ArrayList<FileEntry> getChildren() {

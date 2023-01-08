@@ -24,6 +24,14 @@
             <Icon>content_paste</Icon> The file was overwritten with another file's content
         </div>
 
+        <div v-if="data.type == 'ADD'">
+            <Icon>upload</Icon> The file was uploaded
+        </div>
+
+        <div v-if="data.type == 'UPDATE'">
+            <Icon>upload</Icon> The file was updated
+        </div>
+
         <div class="expandedInfo px-2 pt-2" v-if="expanded" @click.stop>
             <div v-if="data.type == 'RENAME'">
                 <Icon>history</Icon> <b>From:</b> <i>{{ data.additionalData.split(";;;")[0] }}</i>
@@ -62,7 +70,9 @@ export default {
         getColorClass() {
             const res = {
                 'border-red-500' : this.data.type == 'DELETE',
-                'border-green-400' : this.data.type == 'CREATE',
+                'border-green-500' : this.data.type == 'CREATE',
+                'border-pink-400' : this.data.type == 'ADD',
+                'border-yellow-500' : this.data.type == 'UPDATE',
                 'border-yellow-400' : this.data.type == 'MOVE' || this.data.type == 'RENAME',
                 'border-blue-400' : this.data.type == 'COPY_TO' || this.data.type == 'COPY_FROM',
             }

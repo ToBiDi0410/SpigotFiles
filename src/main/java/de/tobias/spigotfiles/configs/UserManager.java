@@ -1,4 +1,4 @@
-package de.tobias.spigotfiles.users;
+package de.tobias.spigotfiles.configs;
 
 import de.tobias.mcutils.bukkit.BukkitLogger;
 import de.tobias.spigotfiles.Main;
@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class UserManager {
 

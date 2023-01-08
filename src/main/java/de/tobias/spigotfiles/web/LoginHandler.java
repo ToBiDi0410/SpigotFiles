@@ -1,7 +1,7 @@
 package de.tobias.spigotfiles.web;
 
 import de.tobias.spigotfiles.Main;
-import de.tobias.spigotfiles.users.User;
+import de.tobias.spigotfiles.configs.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

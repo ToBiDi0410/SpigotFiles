@@ -2,14 +2,13 @@ package de.tobias.spigotfiles.filedb;
 
 import de.tobias.mcutils.bukkit.BukkitLogger;
 import de.tobias.spigotfiles.Main;
-import de.tobias.spigotfiles.users.User;
+import de.tobias.spigotfiles.configs.User;
 import jakarta.servlet.http.Part;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 
 public class FileManager {
 

@@ -1,7 +1,7 @@
 <template>
     <div class="FileContextMenu fixed z-50 w-48 bg-gray-300 text-black rounded-sm p-2" :class="{'hidden' : !show}" :style="'top: ' + y + 'px; left: ' + x + 'px;'" ref="menu">
-        <div class="option py-2 hover:bg-gray-200 text-red-600 font-bold" @click="handleDeleteClick" v-if="window.user.permissions.includes('WRITE')"><Icon>delete</Icon> Delete</div>
-        <div class="option py-2 hover:bg-gray-200" @click="handleDownloadClick" v-if="window.user.permissions.includes('READ')"><Icon>download</Icon> Download</div>
+        <div class="option py-2 hover:bg-gray-200 text-red-600 font-bold" @click="handleDeleteClick" v-if="window.user.permissions.includes('WRITE') && fileTargeted"><Icon>delete</Icon> Delete</div>
+        <div class="option py-2 hover:bg-gray-200" @click="handleDownloadClick" v-if="window.user.permissions.includes('READ') && fileTargeted"><Icon>download</Icon> Download</div>
         <div class="option py-2 hover:bg-gray-200" @click="handleUploadClick" v-if="window.user.permissions.includes('WRITE')"><Icon>upload</Icon> Upload</div>
     </div>
 </template>

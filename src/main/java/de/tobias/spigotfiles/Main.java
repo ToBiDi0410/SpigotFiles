@@ -1,11 +1,17 @@
 package de.tobias.spigotfiles;
 
+import de.tobias.mcutils.bukkit.BukkitAutoUpdater;
 import de.tobias.mcutils.bukkit.BukkitLogger;
+import de.tobias.spigotfiles.commands.AddUserCommand;
+import de.tobias.spigotfiles.commands.ChangePasswordCommand;
+import de.tobias.spigotfiles.commands.RemoveUserCommand;
+import de.tobias.spigotfiles.commands.SetPermissionCommand;
+import de.tobias.spigotfiles.configs.Settings;
 import de.tobias.spigotfiles.filedb.FileDB;
 import de.tobias.spigotfiles.filedb.FileIndexer;
-import de.tobias.spigotfiles.users.User;
-import de.tobias.spigotfiles.users.UserManager;
+import de.tobias.spigotfiles.configs.UserManager;
 import de.tobias.spigotfiles.web.JettyServer;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -17,16 +23,23 @@ public class Main extends JavaPlugin {
     public FileDB fileDB;
     public JettyServer jettyServer;
     public UserManager userManager;
+    public Settings settings;
 
     @Override
     public void onEnable() {
         pl = this;
         mainLogger.info("Loading Plugin...");
 
-        //BukkitAutoUpdater updater = new BukkitAutoUpdater(mainLogger, this, "https://github.com/ToBiDi0410/JoinMePlus/raw/build/target/joinmeplus-1.0-jar-with-dependencies.jar", "https://raw.githubusercontent.com/ToBiDi0410/JoinMePlus/build/src/main/resources/bungee.yml");
-        //if(updater.checkForUpdateAndUpdate()) return;
+        settings = new Settings(new File(getDataFolder(), "settings.yml"), mainLogger);
+        if(!settings.doAll()) throw new RuntimeException("Settings file invalid! Please fix this or delete the file");
 
-        jettyServer = new JettyServer(8123);
+        if(Settings.ENABLE_AUTO_UPDATER) {
+            BukkitAutoUpdater updater = new BukkitAutoUpdater(mainLogger, this, "https://github.com/ToBiDi0410/SpigotFiles/raw/build/target/SpigotFiles-1.0-SNAPSHOT-jar-with-dependencies.jar", "https://raw.githubusercontent.com/ToBiDi0410/SpigotFiles/build/src/main/resources/plugin.yml");
+            if(updater.checkForUpdateAndUpdate()) return;
+        }
+
+
+        jettyServer = new JettyServer(Settings.WEB_PORT);
         if(!jettyServer.start()) throw new RuntimeException("Failed to start webserver (check above)");
 
         userManager = new UserManager(new File(getDataFolder(), "users.yml"));
@@ -40,14 +53,12 @@ public class Main extends JavaPlugin {
         FileIndexer.indexAll();
         FileIndexer.updateAll();
 
-        mainLogger.info("§aPlugin loaded successfully!");
+        Bukkit.getPluginCommand("sf-adduser").setExecutor(new AddUserCommand());
+        Bukkit.getPluginCommand("sf-removeuser").setExecutor(new RemoveUserCommand());
+        Bukkit.getPluginCommand("sf-setperm").setExecutor(new SetPermissionCommand());
+        Bukkit.getPluginCommand("sf-changepass").setExecutor(new ChangePasswordCommand());
 
-        if(userManager.users.size() < 2) {
-            User testUser = new User("test");
-            testUser.updatePassword("jesusishere");
-            userManager.users.add(testUser);
-            userManager.save();
-        }
+        mainLogger.info("§aPlugin loaded successfully!");
     }
 
     @Override

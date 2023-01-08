@@ -1,4 +1,4 @@
-package de.tobias.spigotfiles.users;
+package de.tobias.spigotfiles.configs;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
@@ -23,6 +23,7 @@ public class User {
     }
 
     public boolean isValidPassword(String pass) {
+        if(passwordHash.length() < 8) return false;
         return BCrypt.verifyer().verify(pass.toCharArray(), passwordHash).verified;
     }
 

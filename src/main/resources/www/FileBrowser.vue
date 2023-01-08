@@ -9,7 +9,7 @@
         </div>
 
         <div class="w-full flex flex-row items-stretch flex-grow relative h-0">
-            <div class="flex-grow h-full overflow-auto">
+            <div class="flex-grow h-full overflow-auto" @contextmenu.self.prevent="handleContextMenuClick($event, null)">
                 <div class="FileEntryRenderer p-2 hover:bg-gray-100" @click="handleBack" v-if="!isAtRoot()">
                     <div class="flex flex-row items-center">
                         <div class="w-16"><Icon>arrow_left</Icon></div>

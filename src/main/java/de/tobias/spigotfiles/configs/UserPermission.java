@@ -1,4 +1,4 @@
-package de.tobias.spigotfiles.users;
+package de.tobias.spigotfiles.configs;
 
 public enum UserPermission {
     WRITE, READ

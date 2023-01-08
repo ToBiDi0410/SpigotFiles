@@ -1,17 +1,14 @@
 package de.tobias.spigotfiles.web;
 
-import de.tobias.spigotfiles.Main;
 import de.tobias.spigotfiles.filedb.FileManager;
-import de.tobias.spigotfiles.users.User;
-import de.tobias.spigotfiles.users.UserPermission;
+import de.tobias.spigotfiles.configs.User;
+import de.tobias.spigotfiles.configs.UserPermission;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class UploadHandler extends HttpServlet {
 

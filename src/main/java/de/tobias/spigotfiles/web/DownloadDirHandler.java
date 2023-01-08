@@ -1,18 +1,16 @@
 package de.tobias.spigotfiles.web;
 
-import de.tobias.spigotfiles.users.User;
-import de.tobias.spigotfiles.users.UserPermission;
+import de.tobias.spigotfiles.configs.User;
+import de.tobias.spigotfiles.configs.UserPermission;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;

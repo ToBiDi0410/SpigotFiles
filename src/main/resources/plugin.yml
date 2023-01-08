@@ -4,3 +4,7 @@ api-version: 1.19
 author: Tobias Dickes
 main: de.tobias.spigotfiles.Main
 commands:
+  sf-adduser:
+  sf-removeuser:
+  sf-setperm:
+  sf-changepass:

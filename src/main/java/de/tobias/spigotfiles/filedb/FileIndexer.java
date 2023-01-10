@@ -2,6 +2,8 @@ package de.tobias.spigotfiles.filedb;
 
 import de.tobias.mcutils.bukkit.BukkitLogger;
 import de.tobias.spigotfiles.Main;
+import de.tobias.spigotfiles.configs.Settings;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.bukkit.Bukkit;
 
@@ -26,6 +28,7 @@ public class FileIndexer {
 
     public static void indexFile(File file, boolean indexFolder) {
         //logger.info("Indexing File: " + file.getAbsolutePath());
+        if(Settings.isExcluded(file)) return;
 
         FileEntry alreadyEntry = Main.pl.fileDB.getEntryByFile(file);
         if (alreadyEntry == null) {
@@ -48,6 +51,7 @@ public class FileIndexer {
     public static void removeIndex(File file) {
         FileEntry alreadyEntry = Main.pl.fileDB.getEntryByFile(file);
         if(alreadyEntry != null) {
+            for(FileEntry childEntry : alreadyEntry.getChildren()) removeIndex(childEntry.getAsFile());
             alreadyEntry.drop();
             logger.info("Dropped index: " + file.getAbsolutePath());
         }
@@ -55,8 +59,12 @@ public class FileIndexer {
 
     public static void updateAll() {
         logger.warn("Updating all indexes (this may take a while)...");
-        for(FileEntry entry : Main.pl.fileDB.fileIndexTable.getAll(10000)) {
-            if(entry.updateIndex()) entry.save();
+        for(FileEntry entry : Main.pl.fileDB.fileIndexTable.getAll(100000)) {
+            if(Settings.isExcluded(entry.getAsFile())) {
+                removeIndex(entry.getAsFile());
+            } else {
+                if(entry.updateIndex()) entry.save();
+            }
         }
         logger.info("§aAll indexes have been updated!");
 

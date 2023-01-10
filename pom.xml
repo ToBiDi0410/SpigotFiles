@@ -102,7 +102,7 @@
         <dependency>
             <groupId>com.github.ToBiDi0410</groupId>
             <artifactId>MCUtils</artifactId>
-            <version>799b26f467</version>
+            <version>eefc1df16f</version>
         </dependency>
     </dependencies>
 

@@ -18,6 +18,56 @@
                         <div class="pl-8 w-1/12"></div>
                     </div>
                 </div>
+
+                <div class="FileEntryLoadingRenderer p-2 hover:bg-gray-100" v-if="loading">
+                    <div class="flex flex-row items-center justify-center content-center align-middle">
+                        <div aria-label="Loading..." role="status">
+                            <svg class="h-6 w-6 animate-spin stroke-gray-500" viewBox="0 0 256 256" style="stroke: gray;">
+                                <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+                                <line
+                                x1="195.9"
+                                y1="60.1"
+                                x2="173.3"
+                                y2="82.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="24"></line>
+                                <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+                                <line
+                                x1="195.9"
+                                y1="195.9"
+                                x2="173.3"
+                                y2="173.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="24"></line>
+                                <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+                                <line
+                                x1="60.1"
+                                y1="195.9"
+                                x2="82.7"
+                                y2="173.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="24"></line>
+                                <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+                                <line
+                                x1="60.1"
+                                y1="60.1"
+                                x2="82.7"
+                                y2="82.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="24"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Error text-red-500" v-if="error">
+                    <div>There was an error:</div>
+                    <div>{{ error }}</div>
+                </div>
             
                 <FileEntryRenderer v-for="file of filesToDisplay" v-bind:key="file.ID" :data="file" @click="handleClick(file)" @nameClicked="handleNameClick(file)" @contextmenu.prevent="handleContextMenuClick($event, file)"></FileEntryRenderer>
             </div>
@@ -43,7 +93,7 @@ import Icon from './Icon.vue';
 
 export default {
     components: { FileEntryRenderer, FileSidebarRenderer, Icon, FileContextMenu, FileViewer },
-    data: () => ({ currentPath: "", filesToDisplay: [], ownFile: null, currentFile: null, displayedFile: null }),
+    data: () => ({ currentPath: "", filesToDisplay: [], ownFile: null, currentFile: null, displayedFile: null, loading: false, error: null }),
     async created() {
         await this.updateForPath();
     },
@@ -51,15 +101,23 @@ export default {
         async updateForPath() {
             this.currentFile = null;
             this.filesToDisplay = [];
-            const res = await fetch(window.apiURL + "list?path=" + encodeURIComponent(this.currentPath));
-            const resObj = await res.json();
+            this.loading = true;
+            try {
+                const res = await fetch(window.apiURL + "list?path=" + encodeURIComponent(this.currentPath));
+                const resObj = await res.json();
 
-            this.filesToDisplay = resObj.children.sort((a, b) => {
-                if(a.mimeType == 'FOLDER' && b.mimeType == 'FOLDER') return 0;
-                if(a.mimeType == 'FOLDER') return 1;
-                if(b.mimeType == 'FOLDER') return -1;
-            }).reverse();
-            this.ownFile = resObj.self;
+                this.filesToDisplay = resObj.children.sort((a, b) => {
+                    if(a.mimeType == 'FOLDER' && b.mimeType == 'FOLDER') return 0;
+                    if(a.mimeType == 'FOLDER') return 1;
+                    if(b.mimeType == 'FOLDER') return -1;
+                }).reverse();
+                this.ownFile = resObj.self;
+            } catch (err) {
+                this.error = err;
+                console.warn("Failed to update file list:", err)
+            }
+            this.loading = false;
+            
         },
 
         handleClick(file) {

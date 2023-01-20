@@ -39,7 +39,6 @@ public class FileIndexer {
             entry.firstIndex = System.currentTimeMillis();
             entry.updateIndex();
             if(!entry.create(Main.pl.fileDB.fileIndexTable)) logger.error("Failed to index: " + file.getAbsolutePath());
-
         }
         if(file.isDirectory() && indexFolder) indexFolder(file);
     }
@@ -67,6 +66,21 @@ public class FileIndexer {
             }
         }
         logger.info("§aAll indexes have been updated!");
+    }
 
+    public static void updateFileIndex(File f) {
+        indexFile(f);
+        FileEntry entry = Main.pl.fileDB.getEntryByFile(f);
+        if(entry != null && entry.updateIndex()) entry.save();
+
+        //Update and create child indexes
+        if(f.isDirectory()) {
+            for(File ff : f.listFiles()) {
+                System.out.println(ff.getAbsolutePath());
+                indexFile(ff);
+                FileEntry ffEntry = Main.pl.fileDB.getEntryByFile(ff);
+                if(ffEntry != null && ffEntry.updateIndex()) ffEntry.save();
+            }
+        }
     }
 }

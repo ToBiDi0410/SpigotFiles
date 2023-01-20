@@ -1,18 +1,20 @@
 <template>
     <div class="Main h-full w-full bg-white text-black">
-        <FileBrowser v-if="user"></FileBrowser>
+        <FileManager v-if="user" :FileBackend="backend" :debug="false"></FileManager>
         <Login v-if="!user" @loginCompleted="updateCurrentUser"></Login>
     </div>
 </template>
 
 <script>
-import FileBrowser from './FileBrowser.vue';
+import FileManager from './web-file-manager/FileManager.vue';
 import Login from './Login.vue';
+import { SpigotFilesBackend } from './SpigotFilesBackend.mjs';
 
 export default {
-    components: { FileBrowser, Login },
-    data: () => ({ user: null }),
+    components: { FileManager, Login },
+    data: () => ({ user: null, backend: null }),
     async created() {
+        this.backend = new SpigotFilesBackend();
         await this.updateCurrentUser();
     },
     methods: {

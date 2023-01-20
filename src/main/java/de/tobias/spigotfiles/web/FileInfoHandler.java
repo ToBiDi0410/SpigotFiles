@@ -3,6 +3,7 @@ package de.tobias.spigotfiles.web;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.tobias.spigotfiles.Main;
+import de.tobias.spigotfiles.configs.UserPermission;
 import de.tobias.spigotfiles.filedb.FileEntry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,10 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
-public class ListHandler extends HttpServlet {
+public class FileInfoHandler extends HttpServlet {
 
     public static Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
@@ -22,6 +21,7 @@ public class ListHandler extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         WrappedRequest wReq = new WrappedRequest(req, resp);
         if(!wReq.ensureUser()) return;
+        if(!wReq.ensurePermission(UserPermission.READ)) return;
         if(!wReq.ensureFile("path", false)) return;
 
         File f = wReq.getFileByParameter("path");
@@ -31,16 +31,8 @@ public class ListHandler extends HttpServlet {
             return;
         }
 
-        HashMap<String, Object> values = new HashMap<>();
-
-        ArrayList<FileEntry> children =  baseFile.getChildren();
-        children.forEach(FileEntry::getTransactions);
-        values.put("children", children);
-
         baseFile.getTransactions();
-        values.put("self", baseFile);
-        String result = gson.toJson(values);
-
+        String result = gson.toJson(baseFile);
         resp.setContentType("application/json");
         wReq.respond(200, result);
     }

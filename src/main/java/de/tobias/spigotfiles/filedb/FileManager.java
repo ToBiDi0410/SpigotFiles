@@ -75,8 +75,11 @@ public class FileManager {
             if(!source.exists()) throw new Exception("Source does not exist");
 
             FileIndexer.indexFile(source);
-            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            FileIndexer.indexFile(target);
+            if(source.isDirectory()) {
+                FileUtils.copyDirectory(source, target);
+            } else {
+                FileUtils.copyFile(source, target);
+            }
 
             FileEntry sourceEntry = Main.pl.fileDB.getEntryByFile(source);
             FileEntry targetEntry = Main.pl.fileDB.getEntryByFile(target);
@@ -86,12 +89,17 @@ public class FileManager {
             copyToTransaction.user = u.ID;
             copyToTransaction.additionalData = targetEntry.PATH;
             sourceEntry.addTransaction(copyToTransaction);
+            sourceEntry.forceUpdateIndex();
+            sourceEntry.save();
 
             FileTransaction copyFromTransaction = new FileTransaction();
             copyFromTransaction.type = FileTransactionType.COPY_FROM.name();
             copyFromTransaction.user = u.ID;
             copyFromTransaction.additionalData = sourceEntry.PATH;
             targetEntry.addTransaction(copyFromTransaction);
+            targetEntry.forceUpdateIndex();
+            targetEntry.save();
+            FileIndexer.indexFile(target, true);
 
             logger.info("§aCopied file '" + source.getAbsolutePath() + "' to '" + target.getAbsolutePath() + "'!");
             return true;

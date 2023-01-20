@@ -1,13 +1,10 @@
 package de.tobias.spigotfiles.web;
 
-import de.tobias.spigotfiles.configs.User;
 import de.tobias.spigotfiles.configs.UserPermission;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,46 +16,14 @@ public class DownloadDirHandler extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin", "*");
+        WrappedRequest wReq = new WrappedRequest(req, resp);
+        if(!wReq.ensureUser()) return;
+        if(!wReq.ensurePermission(UserPermission.READ)) return;
+        if(!wReq.ensureFile("path")) return;
 
-        HttpSession session = req.getSession();
-        User u = (User) session.getAttribute("user");
-        if(u == null) {
-            resp.setStatus(401);
-            resp.getWriter().write("LOGIN_REQUIRED");
-            resp.getWriter().close();
-            return;
-        }
-
-        if(!u.permissions.contains(UserPermission.READ)) {
-            resp.setStatus(401);
-            resp.getWriter().write("NO_PERMISSION");
-            resp.getWriter().close();
-            return;
-        }
-
-        if(!req.getParameterMap().containsKey("path")) {
-            resp.setStatus(400);
-            resp.getWriter().write("REQUIRED_FIELD;path");
-            resp.getWriter().close();
-            return;
-        }
-
-        String path = req.getParameter("path");
-        File f = new File(Bukkit.getWorldContainer(), path);
-        if(path.startsWith("C:\\")) f = new File(path);
-
-        if(!f.exists()) {
-            resp.setStatus(404);
-            resp.getWriter().write("FILE_NOT_FOUND");
-            resp.getWriter().close();
-            return;
-        }
-
+        File f = wReq.getFileByParameter("path");
         if(!f.isDirectory()) {
-            resp.setStatus(400);
-            resp.getWriter().write("INVALID_FILE_TYPE;file");
-            resp.getWriter().close();
+            wReq.respond(400, "FILE_NEEDS_TO_BE_DIRECTORY");
             return;
         }
 

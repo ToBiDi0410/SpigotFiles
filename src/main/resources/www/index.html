@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="en" data-theme="halloween">
 
 <head>
     <meta charset="UTF-8">
@@ -11,45 +11,53 @@
 
 <body>
     <div id="app" class="w-full h-full"></div>
-    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.14.0/src-noconflict/ace.js"></script>
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
-    <script>
-        function humanFileSize(size) {
-            var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
-        }
-
-        function humanFileSizeLong(size) {
-            var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['Bytes', 'Kilobytes', 'Megabytes', 'Gigabytes', 'Terrabytes'][i];
-        }
-    </script>
     <script>
         const options = {
             moduleCache: {
                 vue: Vue
             },
-            async getFile(url) {
+            getFile(url) {
+                url = /.*?\.js|.mjs|.css|.less|.vue$/.test(url) ? url : `${url}.vue`
+                const type = /.*?\.js|.mjs$/.test(url) ? ".mjs" : /.*?\.vue$/.test(url) ? '.vue' : /.*?\.css$/.test(url) ? '.css' : '.vue';
+                const getContentData = asBinary => fetch(url, {
 
-                const res = await fetch(url);
-                if (!res.ok)
-                    throw Object.assign(new Error(res.statusText + ' ' + url), {
-                        res
-                    });
+                }).then(res => !res.ok ? Promise.reject(res) : asBinary ? res.arrayBuffer() : res.text())
                 return {
-                    getContentData: asBinary => asBinary ? res.arrayBuffer() : res.text(),
+                    getContentData: getContentData,
+                    type: type
                 }
             },
-            addStyle(textContent) {
-
-                const style = Object.assign(document.createElement('style'), {
-                    textContent
-                });
-                const ref = document.head.getElementsByTagName('style')[0] || null;
-                document.head.insertBefore(style, ref);
+            addStyle(textContent, url) {
+                if (url) {
+                    let linkElement = document.createElement('link');
+                    linkElement.setAttribute('rel', 'stylesheet')
+                    linkElement.setAttribute('type', 'text/css')
+                    linkElement.setAttribute('href', url)
+                    document.head.insertBefore(linkElement,
+                        document.head.getElementsByTagName('style')[0] || null)
+                } else if (textContent) {
+                    let styleElement = document.createElement('style');
+                    document.head.insertBefore(Object.assign(styleElement, {
+                            textContent
+                        }),
+                        document.head.getElementsByTagName('style')[0] || null);
+                }
+                return null;
             },
-        }
+            handleModule(type, getContentData, path, options) {
+                switch (type) {
+                    case '.css':
+                        return options.addStyle(getContentData(false), path);
+                    case '.less':
+                        console.error('.......')
+                }
+            },
+            log(type, ...args) {
+                console.log(type, ...args);
+            }
+        };
 
         const {
             loadModule

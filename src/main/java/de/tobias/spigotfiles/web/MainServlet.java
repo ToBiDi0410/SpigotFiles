@@ -14,13 +14,16 @@ import java.net.URL;
 public class MainServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String path = request.getRequestURI().replace("/web", "");
+        String path = request.getRequestURI();
         if (path.equalsIgnoreCase("/")) {
             path = "/index.html";
         }
 
         String respath = (String) "/www" + path;
         URL res = Main.pl.getClass().getResource(respath);
+        //System.out.println(respath);
+        //System.out.println(Main.pl.webFolderFS.getPath(path).toAbsolutePath());
+
         if(res == null) {
             response.sendError(404);
             return;

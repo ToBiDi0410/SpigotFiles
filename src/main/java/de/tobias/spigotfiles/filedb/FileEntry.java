@@ -49,9 +49,9 @@ public class FileEntry extends DatabaseObjectTableEntry<FileEntry> {
         File f = getAsFile();
 
         if(f.exists()) {
-            if(lastUpdated != null && f.lastModified() <= lastUpdated) return false; //Do not update if it has not been changed since last update
+            if(exists != null && exists && lastUpdated != null && f.lastModified() <= lastUpdated) return false; //Do not update if it has not been changed since last update and is already known
         } else {
-            if(!exists) return false; //Do not update if it does not exist and is already marked as this
+            if(exists != null && !exists) return false; //Do not update if it does not exist and is already marked as this
         }
         FileIndexer.logger.info("Updating index of: " + PATH);
 

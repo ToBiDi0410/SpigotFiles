@@ -35,7 +35,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!--<outputDirectory>C:\Users\Tobias Dickes\Desktop\1.19.2 Test\plugins</outputDirectory>-->
+                    <outputDirectory>C:\Users\Tobias Dickes\Desktop\1.19.2 Test\plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

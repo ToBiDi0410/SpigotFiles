@@ -43,11 +43,14 @@ public class JettyServer {
             handler.addServlet(ResolveUser.class, "/api/username");
             handler.addServlet(DownloadHandler.class, "/api/download");
             handler.addServlet(DownloadDirHandler.class, "/api/downloadDir");
-            handler.addServlet(DeleteHandler.class, "/api/delete");
             handler.addServlet(LoginHandler.class, "/api/login");
             handler.addServlet(LoginStateHandler.class, "/api/loginstate");
+            handler.addServlet(DeleteHandler.class, "/api/delete");
+            handler.addServlet(MoveHandler.class, "/api/move");
+            handler.addServlet(CopyHandler.class, "/api/copy");
             handler.addServlet(UploadHandler.class, "/api/upload").getRegistration().setMultipartConfig(new MultipartConfigElement(""));
             handler.addServlet(MainServlet.class, "/*");
+            handler.addServlet(FileInfoHandler.class, "/api/fileinfo");
 
             server.start();
             logger.info("§aServer started successfully!");

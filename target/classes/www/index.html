@@ -1,0 +1,90 @@
+<html lang="en" data-theme="halloween">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpigotFiles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,200" />
+</head>
+
+<body>
+    <div id="app" class="w-full h-full"></div>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+    <script>
+        const options = {
+            moduleCache: {
+                vue: Vue
+            },
+            getFile(url) {
+                url = /.*?\.js|.mjs|.css|.less|.vue$/.test(url) ? url : `${url}.vue`
+                const type = /.*?\.js|.mjs$/.test(url) ? ".mjs" : /.*?\.vue$/.test(url) ? '.vue' : /.*?\.css$/.test(url) ? '.css' : '.vue';
+                const getContentData = asBinary => fetch(url, {
+
+                }).then(res => !res.ok ? Promise.reject(res) : asBinary ? res.arrayBuffer() : res.text())
+                return {
+                    getContentData: getContentData,
+                    type: type
+                }
+            },
+            addStyle(textContent, url) {
+                if (url) {
+                    let linkElement = document.createElement('link');
+                    linkElement.setAttribute('rel', 'stylesheet')
+                    linkElement.setAttribute('type', 'text/css')
+                    linkElement.setAttribute('href', url)
+                    document.head.insertBefore(linkElement,
+                        document.head.getElementsByTagName('style')[0] || null)
+                } else if (textContent) {
+                    let styleElement = document.createElement('style');
+                    document.head.insertBefore(Object.assign(styleElement, {
+                            textContent
+                        }),
+                        document.head.getElementsByTagName('style')[0] || null);
+                }
+                return null;
+            },
+            handleModule(type, getContentData, path, options) {
+                switch (type) {
+                    case '.css':
+                        return options.addStyle(getContentData(false), path);
+                    case '.less':
+                        console.error('.......')
+                }
+            },
+            log(type, ...args) {
+                console.log(type, ...args);
+            }
+        };
+
+        const {
+            loadModule
+        } = window['vue3-sfc-loader'];
+
+        const app = Vue.createApp({
+            components: {
+                'my-component': Vue.defineAsyncComponent(() => loadModule('./Main.vue', options))
+            },
+            template: '<my-component></my-component>'
+        });
+
+        window.apiURL = window.location.href.replace("index.html", "") + "api/";
+        app.config.globalProperties.window = window;
+        app.mount('#app');
+    </script>
+    <style>
+         ::-webkit-scrollbar {
+            width: 8px;
+            height: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            border-radius: 8px;
+            background: #c2c9d2;
+        }
+    </style>
+</body>
+
+</html>
